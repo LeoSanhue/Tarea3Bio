@@ -7,18 +7,18 @@ def affine_gap_penalty_global_alignment(
 ):
     m, n = len(seq1), len(seq2)
 
-    # Initialize matrices
-    M = np.zeros((m + 1, n + 1))  # Match/mismatch matrix
-    X = np.zeros((m + 1, n + 1))  # Gap in sequence 1 matrix
-    Y = np.zeros((m + 1, n + 1))  # Gap in sequence 2 matrix
+    # incializa matrices
+    M = np.zeros((m + 1, n + 1))  # matriz de aciertos y fallos
+    X = np.zeros((m + 1, n + 1))  # Gap en la matriz 1
+    Y = np.zeros((m + 1, n + 1))  # Gap en la matriz 2
 
-    # Initialize first row and column with gap penalties
+    # commienza las filas y columnas con gaps
     for i in range(1, m + 1):
         X[i][0] = -gap_open_penalty - (i - 1) * gap_extension_penalty
     for j in range(1, n + 1):
         Y[0][j] = -gap_open_penalty - (j - 1) * gap_extension_penalty
 
-    # Fill in matrices
+    # Rellena matrices
     for i in range(1, m + 1):
         for j in range(1, n + 1):
             match = M[i - 1][j - 1] + (
@@ -45,7 +45,7 @@ def affine_gap_penalty_global_alignment(
                 Y[i][j - 1] - gap_extension_penalty,
             )
 
-    # Traceback to find the alignment
+    # Guarda almineamientos
     alignment_seq1 = ""
     alignment_seq2 = ""
     i, j = m, n
@@ -70,7 +70,7 @@ def affine_gap_penalty_global_alignment(
             alignment_seq2 = seq2[j - 1] + alignment_seq2
             j -= 1
         else:
-            break  # Agregamos una condición de salida para evitar el bucle infinito
+            break
 
     total_score = M[m][n]
     return alignment_seq1, alignment_seq2, total_score
@@ -82,9 +82,7 @@ accession_number2 = input("\nNumero de Secuencia 2: ")
 print("\n")
 
 # Búsqueda en GenBank
-Entrez.email = (
-    "your-email@example.com"  # Reemplaza con tu dirección de correo electrónico
-)
+Entrez.email = "your-email@example.com"  # correo de placeholder
 handle = Entrez.efetch(
     db="nucleotide", id=accession_number1, rettype="gb", retmode="text"
 )
